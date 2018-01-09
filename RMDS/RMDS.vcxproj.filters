@@ -36,6 +36,12 @@
     <ClInclude Include="MainInterface.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="TabInterfaceOne.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TabInterfaceTwo.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RMDS.cpp">
@@ -48,6 +54,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MainInterface.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TabInterfaceOne.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TabInterfaceTwo.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

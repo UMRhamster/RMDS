@@ -66,6 +66,7 @@ void CRMDSDlg::DoDataExchange(CDataExchange* pDX)
 	LOGIN_ACCOUNT_FONT.CreatePointFont(100, L"宋体");
 	GetDlgItem(LOGIN_ACCOUNT)->SetFont(&LOGIN_ACCOUNT_FONT);
 	//不合法提示
+
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Text(pDX, LOGIN_ACCOUNT_EDIT, mLoginAccount);
 	DDV_MaxChars(pDX, mLoginAccount, 16);

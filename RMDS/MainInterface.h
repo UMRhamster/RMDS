@@ -1,4 +1,7 @@
 #pragma once
+#include "afxcmn.h"
+#include "TabInterfaceOne.h"
+#include "TabInterfaceTwo.h"
 
 
 // MainInterface 对话框
@@ -20,4 +23,13 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 
 	DECLARE_MESSAGE_MAP()
+public:
+	CTabCtrl mTabBar;
+	TabInterfaceOne tabInterfaceOne;
+	TabInterfaceTwo tabInterfaceTwo;
+	CDialog* dialog[2];
+	virtual BOOL OnInitDialog();
+	//当前选择的选项卡界面
+	int mCurrentTab;
+	afx_msg void OnTcnSelchangeTabbar(NMHDR *pNMHDR, LRESULT *pResult);
 };
