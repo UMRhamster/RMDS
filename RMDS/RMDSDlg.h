@@ -5,6 +5,7 @@
 #pragma once
 #include <iostream>
 #include <string>
+#include "Utils.h"
 
 // CRMDSDlg 对话框
 class CRMDSDlg : public CDialogEx
@@ -15,6 +16,9 @@ public:
 	//控件定义-用于修改文字大小及颜色
 	CFont LOGIN_ACCOUNT_FONT;   //
 	CFont LOGIN_PASSWORD_FONT;
+	//账号、密码不合法字体大小修改
+	CFont ACCOUNT_TEXT;
+	CFont PASSWORD_TEXT;
 
 // 对话框数据
 #ifdef AFX_DESIGN_TIME
@@ -42,10 +46,16 @@ public:
 	afx_msg void OnBnClickedButton();
 	CString mLoginAccount;
 	CString mLoginPassWord;
+	Utils utils;
 //自定义函数
 private:
 	BOOL CheckAccountInfo(std::string str);
 	BOOL CheckPassWordInfo(std::string str);
-	std::string CStrToStr(CString cString);
+	//std::string CStrToStr(CString cString);
+	BOOL CRMDSDlg::LoginFromFile();
 
+public:
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	afx_msg void OnClickedRegisterButton();
 };

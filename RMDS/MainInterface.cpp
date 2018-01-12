@@ -33,6 +33,7 @@ void MainInterface::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(MainInterface, CDialogEx)
 	ON_NOTIFY(TCN_SELCHANGE, MAIN_TABBAR, &MainInterface::OnTcnSelchangeTabbar)
+	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
 
@@ -42,12 +43,28 @@ END_MESSAGE_MAP()
 BOOL MainInterface::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
+	//...........
+	
+	int cx, cy;
+	cx = GetSystemMetrics(SM_CXSCREEN);
+	cy = GetSystemMetrics(SM_CYSCREEN);
+
+	CRect rcTemp;
+	rcTemp.BottomRight() = CPoint(cx, cy);
+	rcTemp.TopLeft() = CPoint(0, 0);
+	MoveWindow(&rcTemp);
+	
+	//绑定菜单
+	cMenu.LoadMenuW(MAIN_MENU);
+	SetMenu(&cMenu);
+	
 	//为TAB增加两个选项卡
-	mTabBar.InsertItem(0, _T("测试1"));
-	mTabBar.InsertItem(1, _T("测试2"));
+	mTabBar.InsertItem(0, _T("视频监控"));
+	mTabBar.InsertItem(1, _T("进程监控"));
 	//创建对话框
 	tabInterfaceOne.Create(TAB_ONE, &mTabBar);
 	tabInterfaceTwo.Create(TAB_TWO, &mTabBar);
+	//..........
 	//设定在Tab内显示的范围  
 	CRect rc;
 	mTabBar.GetClientRect(rc);
@@ -66,6 +83,7 @@ BOOL MainInterface::OnInitDialog()
 	//保存当前显示状态
 	mCurrentTab = 0;
 	mTabBar.SetCurSel(mCurrentTab);
+	
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
 }
@@ -81,4 +99,12 @@ void MainInterface::OnTcnSelchangeTabbar(NMHDR *pNMHDR, LRESULT *pResult)
 	dialog[mCurrentTab]->ShowWindow(SW_SHOW);
 	
 	*pResult = 0;
+}
+
+
+void MainInterface::OnSize(UINT nType, int cx, int cy)
+{
+	CDialogEx::OnSize(nType, cx, cy);
+
+
 }

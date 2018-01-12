@@ -8,6 +8,9 @@
 #include "afxdialogex.h"
 #include "Resource.h"
 #include "MainInterface.h"
+#include "RegisterDialog.h"
+#include "HttpProcess.h"
+#include "Utils.h"
 #include <regex>
 
 #ifdef _DEBUG
@@ -65,7 +68,11 @@ void CRMDSDlg::DoDataExchange(CDataExchange* pDX)
 	//字体修改
 	LOGIN_ACCOUNT_FONT.CreatePointFont(100, L"宋体");
 	GetDlgItem(LOGIN_ACCOUNT)->SetFont(&LOGIN_ACCOUNT_FONT);
-	//不合法提示
+	//不合法提示的字体大小修改,颜色修改在OnCtlColor
+	ACCOUNT_TEXT.CreatePointFont(80, L"宋体");
+	GetDlgItem(LOGIN_ACCOUNT_TEXT)->SetFont(&ACCOUNT_TEXT);
+	PASSWORD_TEXT.CreatePointFont(80, L"宋体");
+	GetDlgItem(LOGIN_PASSWORD_TEXT)->SetFont(&PASSWORD_TEXT);
 
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Text(pDX, LOGIN_ACCOUNT_EDIT, mLoginAccount);
@@ -80,6 +87,8 @@ BEGIN_MESSAGE_MAP(CRMDSDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_STN_CLICKED(LOGIN_ACCOUNT, &CRMDSDlg::OnStnClickedAccount)
 	ON_BN_CLICKED(LOGIN_BUTTON, &CRMDSDlg::OnBnClickedButton)
+	ON_WM_CTLCOLOR()
+	ON_BN_CLICKED(REGISTER_BUTTON, &CRMDSDlg::OnClickedRegisterButton)
 END_MESSAGE_MAP()
 
 
@@ -114,11 +123,11 @@ BOOL CRMDSDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// 设置大图标
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
-	// TODO: 在此添加额外的初始化代码
+	//让账号编辑框先获得焦点
+	GetDlgItem(LOGIN_ACCOUNT_EDIT)->SetFocus();
 
-
-
-	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
+	//S
+	return FALSE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
 void CRMDSDlg::OnSysCommand(UINT nID, LPARAM lParam)
@@ -159,7 +168,37 @@ void CRMDSDlg::OnPaint()
 	}
 	else
 	{
+		//获取窗口dc
+		CPaintDC dc(this);
+		//获取窗口的大小
+		CRect windowRect;
+		GetWindowRect(&windowRect);
+		//图片资源路径
+		CImage cImage;
+		cImage.Load(_T("res\\main_bg.jpg"));
+		//双缓冲绘图
+		CDC memDC;   //内存dc
+		CBitmap cBitmap;   //可理解为画布
+		cBitmap.CreateCompatibleBitmap(&dc, windowRect.Width(), windowRect.Height());
+		memDC.CreateCompatibleDC(&dc);
+		CBitmap* hOldMap = (CBitmap*)memDC.SelectObject(&cBitmap);
+		//将图片画在内存dc上
+		//cImage.Draw(GetDC()->GetSafeHdc(), CRect(0, 0, windowRect.Width(), windowRect.Height()));
+		cImage.BitBlt(memDC, 0, 0, windowRect.Width(), windowRect.Height(), 0, 0, SRCCOPY);
+		//再将内存dc上的内容滑到窗口dc上
+		dc.BitBlt(0, 0, windowRect.Width(), windowRect.Height(), &memDC, 0, 0, SRCCOPY);
+
+		memDC.SelectObject(cImage);  //选择原来系统提供给我们的位图对象
+		cBitmap.DeleteObject();
+		memDC.DeleteDC();
+
 		CDialogEx::OnPaint();
+		//CRect crect;
+		//GetWindowRect(&crect);
+		//CImage cImage;
+		//if (cImage.Load(_T("main_bg.bmp")) == S_OK) {
+		//	cImage.Draw(GetDC()->GetSafeHdc(), CRect(0, 0, crect.Width(), crect.Height()));
+		//}
 	}
 }
 
@@ -180,15 +219,26 @@ void CRMDSDlg::OnStnClickedAccount()
 //登录处理
 void CRMDSDlg::OnBnClickedButton()
 {
+
 	GetDlgItem(LOGIN_ACCOUNT_EDIT)->GetWindowTextW(mLoginAccount); //获取输入账号
 	GetDlgItem(LOGIN_PASSWORD_EDIT)->GetWindowTextW(mLoginPassWord); //获取输入密码
-	if (CheckAccountInfo(CStrToStr(mLoginAccount)) && CheckPassWordInfo(CStrToStr(mLoginPassWord)))
+	if (CheckAccountInfo(utils.CStrToStr(mLoginAccount)) && CheckPassWordInfo(utils.CStrToStr(mLoginPassWord)))
 	{
+		//HttpProcess httpProcess;
+	//	httpProcess.Login(mLoginAccount,mLoginPassWord);
+		
 		MainInterface *mainInterface = new MainInterface; //创建主界面
 		mainInterface->Create(IDD_DIALOG_MAIN, NULL);      //创建主界面
 		mainInterface->ShowWindow(SW_SHOW);               //显示主界面
 		ShowWindow(SW_HIDE);                              //隐藏当前界面（登录界面）
+		
 	}
+}
+
+void CRMDSDlg::OnClickedRegisterButton()
+{
+	RegisterDialog registerDialog;
+	registerDialog.DoModal();
 }
 
 /*
@@ -216,15 +266,77 @@ BOOL CRMDSDlg::CheckPassWordInfo(std::string str)
 	return std::regex_match(str, regPattern);  //返回判断 
 }
 /*
- *CString to string
- *
- *输入：CString类型
- *
- *输出：string类型
- */
-std::string CRMDSDlg::CStrToStr(CString cString)
+BOOL CRMDSDlg::LoginFromFile() 
 {
-	CT2CA tempPassWord(cString);
-	std::string strPassWord(tempPassWord);    //转换成string类型
-	return strPassWord;
+	//以创建方式打开文件，不进行截断，只读操作
+	CFile file(_T("file\\login.txt"), CFile::modeCreate
+		                            | CFile::modeRead
+		                            | CFile::modeNoTruncate);
+	while (true)
+	{
+		//文件指针
+		static int position = 0;
+		//移动文件指针
+		file.Seek(0, CFile::begin);
+		//读取文件
+		char *buf;
+		int ret = file.Read(buf, 100);
+		//已达到文件末尾，中止循环
+		if (ret < 100)
+		{
+			break;
+		}
+		//关闭文件
+		file.Close();
+	}
+	return true;
+}*/
+//控制文字颜色显示
+HBRUSH CRMDSDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+	HBRUSH hbr = CDialogEx::OnCtlColor(pDC, pWnd, nCtlColor);
+
+	int id = pWnd->GetDlgCtrlID();
+	if (LOGIN_ACCOUNT_TEXT == id || LOGIN_PASSWORD_TEXT == id)
+	{
+		pDC->SetTextColor(RGB(255, 0, 0));  //设置颜色为红色
+		pDC->SetBkMode(TRANSPARENT);//设置文本背景模式为透明
+		return (HBRUSH)GetStockObject(NULL_BRUSH);
+	}
+	
+	if (LOGIN_ACCOUNT == id || LOGIN_PASSWORD == id)
+	{
+		pDC->SetTextColor(RGB(255, 255, 255));  //设置颜色为白色
+		pDC->SetBkMode(TRANSPARENT);//设置文本背景模式为透明
+		return (HBRUSH)GetStockObject(NULL_BRUSH);
+	}
+	return hbr;
+}
+
+//监听键盘事件,控制不合法提示
+BOOL CRMDSDlg::PreTranslateMessage(MSG* pMsg)
+{
+	// TODO: 在此添加专用代码和/或调用基类
+	if (pMsg->message == WM_KEYUP)    //WM_KEYUP 按下键盘松开后
+	{
+		GetDlgItem(LOGIN_ACCOUNT_EDIT)->GetWindowTextW(mLoginAccount);
+		if (CheckAccountInfo(utils.CStrToStr(mLoginAccount))) 
+		{
+			GetDlgItem(LOGIN_ACCOUNT_TEXT)->ShowWindow(SW_HIDE);
+		}
+		else
+		{
+			GetDlgItem(LOGIN_ACCOUNT_TEXT)->ShowWindow(SW_SHOW);
+		}
+		GetDlgItem(LOGIN_PASSWORD_EDIT)->GetWindowTextW(mLoginPassWord);
+		if (CheckPassWordInfo(utils.CStrToStr(mLoginPassWord)))
+		{
+			GetDlgItem(LOGIN_PASSWORD_TEXT)->ShowWindow(SW_HIDE);
+		}
+		else
+		{
+			GetDlgItem(LOGIN_PASSWORD_TEXT)->ShowWindow(SW_SHOW);
+		}
+	}
+	return CDialogEx::PreTranslateMessage(pMsg);
 }

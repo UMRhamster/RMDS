@@ -28,8 +28,11 @@ public:
 	TabInterfaceOne tabInterfaceOne;
 	TabInterfaceTwo tabInterfaceTwo;
 	CDialog* dialog[2];
+	//菜单
+	CMenu cMenu;
 	virtual BOOL OnInitDialog();
 	//当前选择的选项卡界面
 	int mCurrentTab;
 	afx_msg void OnTcnSelchangeTabbar(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 };

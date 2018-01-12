@@ -42,6 +42,15 @@
     <ClInclude Include="TabInterfaceTwo.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="RegisterDialog.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="HttpProcess.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RMDS.cpp">
@@ -62,6 +71,15 @@
     <ClCompile Include="TabInterfaceTwo.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="RegisterDialog.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="HttpProcess.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="RMDS.rc">
@@ -75,6 +93,12 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\RMDS.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\bitmap1.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\main_bg.bmp">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>

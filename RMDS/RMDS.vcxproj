@@ -187,7 +187,9 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="HttpProcess.h" />
     <ClInclude Include="MainInterface.h" />
+    <ClInclude Include="RegisterDialog.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="RMDS.h" />
     <ClInclude Include="RMDSDlg.h" />
@@ -195,9 +197,12 @@
     <ClInclude Include="TabInterfaceOne.h" />
     <ClInclude Include="TabInterfaceTwo.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="HttpProcess.cpp" />
     <ClCompile Include="MainInterface.cpp" />
+    <ClCompile Include="RegisterDialog.cpp" />
     <ClCompile Include="RMDS.cpp" />
     <ClCompile Include="RMDSDlg.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -208,6 +213,7 @@
     </ClCompile>
     <ClCompile Include="TabInterfaceOne.cpp" />
     <ClCompile Include="TabInterfaceTwo.cpp" />
+    <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="RMDS.rc" />
@@ -216,6 +222,8 @@
     <None Include="res\RMDS.rc2" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="res\bitmap1.bmp" />
+    <Image Include="res\main_bg.bmp" />
     <Image Include="res\RMDS.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
